@@ -3,18 +3,83 @@
 <head>
   <meta charset="UTF-8">
   <title>Websockets goodness</title>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.6/d3.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"></script>
+  <script src="/pie-chart.min.js"></script>
+  <style>
+    hgroup{
+      font-family: 'Proxima Nova', Helvetica, sans-serif;
+      display: inline-block;
+      text-align: center;
+      text-transform: uppercase;
+      border: 5px solid #fff;
+      padding: .5em 3em;
+    }
+    section {
+      margin: 0 auto;
+      width: 600px;
+      height: 400px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 1.5em;
+      color: #FF4136;
+    }
+    span {
+      display: inline-block;
+      line-height: 2.4em;
+      height: 2.4em;
+      width: 2.4em;
+      border-radius: 1.2em;
+      background-color: #3D9970;
+      color: white;
+    }
+  </style>
 </head>
-<body>
-  Here I am!
+<body ng-app="packets-app">
+  <section ng-controller="packetsCtrl">
+    <hgroup>
+      <h1 ng-if="totalEvents == 0">Everything seems quiet</h1>
+      <h1 ng-if="totalEvents > 0">Wait! Some shizzle is happening&hellip;</h1>
+      <h2>Total events: <span>{{ totalEvents }}</span></h2>
+    </hgroup>
+    <pie-chart data="packets" options="options"></pie-chart>
+  </section>
   <script>
-    (function () {
-      var messages = document.getElementById("messages"),
-          ws = new WebSocket("ws://localhost:8002/ws");
+    var colorMap = {
+      main: "#39CCCC", //teal
+      user: "#FF851B", //orange
+      articles: "#FF4136", //red
+      tags: "#0074D9" //blue
+    };
+
+    var packetsApp = angular.module('packets-app', ['n3-pie-chart']);
+    packetsApp.controller('packetsCtrl', ['$scope', function($scope) {
+      $scope.options = { thickness: 60 };
+      $scope.packets = [];
+      $scope.totalEvents = 0;
+      var referenceCounter = {};
+      var ws = new WebSocket("ws://localhost:8002/ws");
 
       ws.onmessage = function (event) {
-        console.log(event.data);
-      };
-    })();
+        var data = JSON.parse(event.data);
+        $scope.$apply(function () {
+          $scope.totalEvents++;
+          if (!referenceCounter[data.channel]) {
+            var channel = {
+              label: data.channel,
+              value: 1,
+              color: colorMap[data.channel]
+            }
+            referenceCounter[data.channel] = channel;
+            $scope.packets.push(channel);
+          } else {
+            referenceCounter[data.channel].value++;
+          }
+          console.log(referenceCounter);
+        });
+      }
+    }]);
   </script>
 </body>
 </html>
