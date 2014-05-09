@@ -7,7 +7,8 @@ defmodule Strainer.Supervisor do
 
   def init(config) do
     children = [
-      worker(Strainer.Listener, [config.listener_host, config.listener_port])
+      worker(Strainer.Listener, [config.listener_host, config.listener_port]),
+      worker(Strainer.WsServer, [])
     ]
     supervise(children, strategy: :one_for_one)
   end

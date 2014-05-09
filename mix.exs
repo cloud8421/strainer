@@ -10,12 +10,13 @@ defmodule Strainer.Mixfile do
   end
 
   def application do
-    [ applications: [:lager],
+    [ applications: [:lager, :cowboy],
       mod: {Strainer, config} ]
   end
 
   defp deps do
     [{:exlager, github: "khia/exlager"},
+     {:cowboy, github: "extend/cowboy"},
      {:msgpack, github: "msgpack/msgpack-erlang"}]
   end
 

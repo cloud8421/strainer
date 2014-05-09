@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Websockets goodness</title>
+</head>
+<body>
+  Here I am!
+  <script>
+    (function () {
+      var messages = document.getElementById("messages"),
+          ws = new WebSocket("ws://localhost:8002/ws");
+
+      ws.onmessage = function (event) {
+        console.log(event.data);
+      };
+    })();
+  </script>
+</body>
+</html>

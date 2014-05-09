@@ -19,7 +19,9 @@ defmodule Strainer.Listener do
   def handle_info({:udp, _socket, _host, _port, packet}, state) do
     spawn(fn ->
       { :ok, channel, message } = Decoder.decode(packet)
-      Lager.info "#{channel}: #{message}"
+      payload = "#{channel}: #{message}"
+      Strainer.WsServer.broadcast payload
+      Lager.info payload
     end)
     { :noreply, state }
   end
