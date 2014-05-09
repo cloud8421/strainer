@@ -17,6 +17,7 @@ defmodule Strainer.Mixfile do
   defp deps do
     [{:exlager, github: "khia/exlager"},
      {:cowboy, github: "extend/cowboy"},
+     {:json, github: "cblage/elixir-json"},
      {:msgpack, github: "msgpack/msgpack-erlang"}]
   end
 

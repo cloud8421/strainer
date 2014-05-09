@@ -1,10 +1,11 @@
 defmodule Strainer.WsServer do
   require Lager
 
-  def broadcast(message) do
+  def broadcast(packet) do
+    { :ok, message } = JSON.encode(packet)
     broadcast ws_server, { :message, message }
   end
-  defp broadcast(nil, message), do: :wtf
+  defp broadcast(nil, _message), do: :wtf
   defp broadcast(pid, message) do
     send pid, message
   end
@@ -12,8 +13,8 @@ defmodule Strainer.WsServer do
   def start_link do
     dispatch = :cowboy_router.compile([
       {:_, [
-        {'/'  ,  Strainer.StaticHandler, []},
-        {'/ws',  Strainer.WsHandler,     []}
+        {'/ws',        Strainer.WsHandler,     []},
+        {'/:filename', Strainer.StaticHandler, []}
       ]}
     ])
     Lager.info("Starting cowboy websockets handler")

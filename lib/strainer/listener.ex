@@ -18,10 +18,12 @@ defmodule Strainer.Listener do
 
   def handle_info({:udp, _socket, _host, _port, packet}, state) do
     spawn(fn ->
-      { :ok, channel, message } = Decoder.decode(packet)
-      payload = "#{channel}: #{message}"
-      Strainer.WsServer.broadcast payload
-      Lager.info payload
+      { :ok, packet_content } = :msgpack.unpack(packet)
+
+      packet_map = Decoder.packet_to_dict(packet_content)
+      Strainer.WsServer.broadcast packet_map
+
+      Lager.info "#{packet_map.channel}: #{packet_map.message}"
     end)
     { :noreply, state }
   end
