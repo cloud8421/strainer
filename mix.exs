@@ -15,7 +15,8 @@ defmodule Strainer.Mixfile do
   end
 
   defp deps do
-    [{:exlager, github: "khia/exlager"}]
+    [{:exlager, github: "khia/exlager"},
+     {:msgpack, github: "msgpack/msgpack-erlang"}]
   end
 
   defp config do
