@@ -59,7 +59,7 @@
       $scope.packets = [];
       $scope.totalEvents = 0;
       var referenceCounter = {};
-      var ws = new WebSocket("ws://localhost:8002/ws");
+      var ws = new WebSocket("ws://" + window.location.host + "/ws");
 
       ws.onmessage = function (event) {
         var data = JSON.parse(event.data);
