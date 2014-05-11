@@ -9,8 +9,8 @@ defmodule Strainer.StaticHandler do
     {path, req} = :cowboy_req.path(req)
     {_slash, filename} = String.split_at(path, 1)
     extension = String.split(path, ".") |> List.last
-    {:ok, html_data} = File.read("static/#{filename}")
-    {:ok, req} = :cowboy_req.reply 200, [{"Content-Type", extension_for(extension)}], html_data, req
+    {:ok, body} = File.read("static/#{filename}")
+    {:ok, req} = :cowboy_req.reply 200, [{"Content-Type", extension_for(extension)}], body, req
     {:ok, req, state}
   end
 
@@ -19,5 +19,5 @@ defmodule Strainer.StaticHandler do
   end
 
   defp extension_for("js"), do: "text/javascript; charset=UTF-8"
-  defp extension_for("html"), do: "text/html"
+  defp extension_for("html"), do: "text/html; charset=UTF-8"
 end

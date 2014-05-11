@@ -1,6 +1,5 @@
 defmodule Strainer.Listener do
   use GenServer.Behaviour
-  alias Strainer.Decoder
   require Lager
 
   def start_link(host, port) do
@@ -18,12 +17,10 @@ defmodule Strainer.Listener do
 
   def handle_info({:udp, _socket, _host, _port, packet}, state) do
     spawn(fn ->
-      { :ok, packet_content } = :msgpack.unpack(packet)
+      packet_map = MsgPack.to_map(packet)
 
-      packet_map = Decoder.packet_to_dict(packet_content)
       Strainer.WsServer.broadcast packet_map
-
-      Lager.info "#{packet_map.channel}: #{packet_map.message}"
+      Lager.info "Received packet: #{packet_map.channel} - #{packet_map.message}"
     end)
     { :noreply, state }
   end
