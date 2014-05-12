@@ -22,7 +22,7 @@ defmodule Strainer.Mixfile do
   end
 
   defp config do
-    %{ listener_host: {10,2,20,57}, listener_port: 9001 }
+    %{ listener_host: {127,0,0,1}, listener_port: 9001 }
   end
 
   defp options(env) when env == :test do
